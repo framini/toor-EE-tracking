@@ -1,3 +1,9 @@
+<script>
+	$(function() {
+        $( "#datepicker" ).datepicker();
+    });
+</script>
+
 <div class="pageContents">
 
 	<?=form_open('C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_editar_seguimiento')?>
@@ -23,6 +29,11 @@
 						$this->table->add_row(
 							form_label('Pieza'),
 							form_dropdown('pieza_id', $piezas)
+						);
+						
+						$this->table->add_row(
+							form_label('Fecha de llegada'),
+							form_input(array('name' => 'date_llegada', 'id' => 'datepicker'))
 						);
 						
 						$this->table->add_row(

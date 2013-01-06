@@ -17,12 +17,14 @@ class Seguimiento_piezas_mcp {
 		}
 		
 		//CSS
+		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/smoothness/jquery-ui-1.9.2.custom.min.css' rel='stylesheet'/>");
 		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/jquery.dataTables_themeroller.css' rel='stylesheet'/>");
 		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/dataTable.custom.css' rel='stylesheet'/>");
 		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/chosen.css' rel='stylesheet'/>");
 		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/general.css' rel='stylesheet'/>");
 		
 		//JS
+		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/lib/jquery-ui-1.9.2.custom.min.js'></script>");
 		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/lib/jquery.dataTables.js'></script>");
 		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/lib/chosen.jquery.js'></script>");
 		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/varios/mensajes.js'></script>");
@@ -40,7 +42,7 @@ class Seguimiento_piezas_mcp {
 	public function index() {
 		//Agregamos los botones
 		$this->EE->cp->set_right_nav(array(
-				'nuevo_seguimiento'		=> BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_editar_seguimiento',
+				'nuevo_seguimiento'		=> BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_seguimiento',
 				'gestion_piezas'        => BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas'
 		));
 		
@@ -81,7 +83,7 @@ class Seguimiento_piezas_mcp {
 		$this->EE->cp->set_breadcrumb(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas', $this->EE->lang->line('seguimiento_piezas_module_name'));
 		
 		$this->EE->cp->set_right_nav(array(
-				'nueva_pieza'        => BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_editar_pieza'
+				'nueva_pieza'        => BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_pieza'
 		));
 		
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('titulo_gestion_piezas'));
@@ -496,7 +498,7 @@ class Seguimiento_piezas_mcp {
 		$this->getTable('piezas', $campos, TRUE, 'pieza_id');
 	}
 	
-	public function crear_editar_seguimiento() {
+	public function crear_seguimiento() {
 		
 		$this->EE->load->library("form_validation");
 		
@@ -552,7 +554,7 @@ class Seguimiento_piezas_mcp {
 		return $this->EE->load->view('seguimientos/crear_editar_seguimiento', $data , TRUE);
 	}
 
-	public function crear_editar_pieza() {
+	public function crear_pieza() {
 		
 		$this->EE->load->library("form_validation");
 		
