@@ -29,7 +29,7 @@ $(function() {
 
 <div class="error" style="display: none;"><span></span></div>
 
-	<?=form_open('C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_editar_pieza', array('id' => 'formulario'))?>
+	<?=form_open('C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_pieza', array('id' => 'formulario'))?>
 					<?php //echo validation_errors(); ?>
 					<?php
 						$this->table->set_template($cp_table_template);

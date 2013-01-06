@@ -1,5 +1,13 @@
 <script>
 $(function() {
+	
+	$( ".datepicker" ).datepicker({
+        	showOn: "button",
+            buttonImage: "themes/third_party/seguimiento_piezas/images/datepicker.png",
+            buttonImageOnly: true,
+            dateFormat: "yy-mm-dd"
+    });
+	
 	$('form').submit(function() {
 		
 		var count = 0;
@@ -46,10 +54,13 @@ $(function() {
 		'value'=> $seguimiento['estado'],
 		'class'=> 'required'
 	);
+
 	
-	$data_detalle = array(
-		'name' => 'detalle',
-		'value' => $seguimiento['detalle']
+	$data_fecha_llegada = array(
+		'name' => 'date_llegada[' . $seguimiento['seguimiento_id'] . ']', 
+		'class' => 'datepicker', 
+		'style' => 'width:20%',
+		'value' => $seguimiento['date_llegada']
 	);
 	
 	$this -> table -> add_row(array(lang('row_seg_codigo'), 
@@ -66,6 +77,11 @@ $(function() {
 									form_input($data_estado) 
 									)
 							  );
+	
+	$this->table->add_row(
+							form_label(lang('row_seg_fecha_llegada')),
+							form_input($data_fecha_llegada)
+						);
 
 	$this -> table -> add_row( array(lang('row_seg_usuario'), 
 									 form_dropdown('usuario[' . $seguimiento['seguimiento_id'] . ']', $usuarios, $seguimiento['usuario_id'])

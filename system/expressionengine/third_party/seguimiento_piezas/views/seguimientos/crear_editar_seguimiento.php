@@ -1,12 +1,17 @@
 <script>
 	$(function() {
-        $( "#datepicker" ).datepicker();
+        $( "#datepicker" ).datepicker({
+        	showOn: "button",
+            buttonImage: "themes/third_party/seguimiento_piezas/images/datepicker.png",
+            buttonImageOnly: true,
+            dateFormat: "yy-mm-dd"
+        });
     });
 </script>
 
 <div class="pageContents">
 
-	<?=form_open('C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_editar_seguimiento')?>
+	<?=form_open('C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_seguimiento')?>
 					<?php //echo validation_errors(); ?>
 					<?php
 						// without the div above, the slide effect breaks the table widths
@@ -33,7 +38,7 @@
 						
 						$this->table->add_row(
 							form_label('Fecha de llegada'),
-							form_input(array('name' => 'date_llegada', 'id' => 'datepicker'))
+							form_input(array('name' => 'date_llegada', 'id' => 'datepicker', 'style' => 'width:20%'))
 						);
 						
 						$this->table->add_row(

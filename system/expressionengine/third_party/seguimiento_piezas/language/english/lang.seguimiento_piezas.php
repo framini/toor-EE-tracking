@@ -36,6 +36,7 @@ $lang = array(
 'row_seg_pieza'									=> 	'Pieza',
 'row_seg_detalle'								=> 	'Detalle',
 'row_seg_estado'								=> 	'Estado',
+'row_seg_fecha_llegada'							=>	'Fecha Llegada',
 
 //Botones
 'nuevo_seguimiento' 							=>  'Nuevo Seguimiento',

@@ -18,3 +18,8 @@ div.error {
 	font-weight: bold;
 	margin: 0px 0px 10px 0px;
 }
+
+img.ui-datepicker-trigger {
+	margin: 0px 5px 0px 0px;
+	float: left;
+}

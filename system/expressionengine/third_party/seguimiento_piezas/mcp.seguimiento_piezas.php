@@ -17,7 +17,7 @@ class Seguimiento_piezas_mcp {
 		}
 		
 		//CSS
-		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/smoothness/jquery-ui-1.9.2.custom.min.css' rel='stylesheet'/>");
+		//$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/smoothness/jquery-ui-1.9.2.custom.min.css' rel='stylesheet'/>");
 		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/jquery.dataTables_themeroller.css' rel='stylesheet'/>");
 		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/dataTable.custom.css' rel='stylesheet'/>");
 		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/chosen.css' rel='stylesheet'/>");
@@ -226,7 +226,8 @@ class Seguimiento_piezas_mcp {
 		$detalles = $this->EE->input->post('detalle');
 		$usuarios = $this->EE->input->post('usuario');
 		$piezas = $this->EE->input->post('pieza');
-		
+		$fechas_llegada = $this->EE->input->post('date_llegada');
+
 		$errores = array();
 		
 		foreach ($this->EE->input->post('seguimiento_id') as $key => $value) {
@@ -237,6 +238,7 @@ class Seguimiento_piezas_mcp {
 					'detalle'		=> 		$detalles[ $value ],
 					'usuario_id'	=> 		$usuarios[ $value ],
 					'pieza_id'		=> 		$piezas[ $value ],
+					'date_llegada'	=>		strtotime ($fechas_llegada[ $value ] )
 				);
 			} else {
 				$errores[] = array( $value => lang('campo_requerido') );
@@ -302,7 +304,9 @@ class Seguimiento_piezas_mcp {
 				//'username'				=>		$usuario[0]['username'],
 				//'pieza'					=>		$pieza[0]['nombre'],
 				'detalle'				=>		$seguimiento->detalle,
-				'date_added'			=>		unix_to_human($seguimiento->date_added, TRUE, 'eu')
+				'date_added'			=>		unix_to_human($seguimiento->date_added, TRUE, 'eu'),
+				//'date_llegada'			=>		unix_to_human($seguimiento->date_llegada, TRUE, 'eu')
+				'date_llegada'			=>		date('Y-m-d', $seguimiento->date_llegada)
 			);
 		}
 		
@@ -499,7 +503,7 @@ class Seguimiento_piezas_mcp {
 	}
 	
 	public function crear_seguimiento() {
-		
+		$this->EE->load->helper('date');
 		$this->EE->load->library("form_validation");
 		
 		//Inicializamos el breadcrumb
@@ -511,13 +515,15 @@ class Seguimiento_piezas_mcp {
 		$this->EE->form_validation->set_rules("usuario_id", "usuario", "trim|required|xss_clean");
 		$this->EE->form_validation->set_rules("pieza_id", "pieza", "trim|required|xss_clean");
 		$this->EE->form_validation->set_rules("detalle", "detalle", "trim|required|xss_clean");
+		$this->EE->form_validation->set_rules("date_llegada", "Fecha llegada", "required");
 		
 		if( $this->EE->form_validation->run() ) {
-			
+	
 			$registro = array(
 				'usuario_id'     =>   $this->EE->form_validation->set_value('usuario_id'),
 				'pieza_id'     	 =>   $this->EE->form_validation->set_value('pieza_id'),
-				'detalle'     	 =>   $this->EE->form_validation->set_value('detalle')
+				'detalle'     	 =>   $this->EE->form_validation->set_value('detalle'),
+				'date_llegada'	 =>	  strtotime( $this->EE->form_validation->set_value('date_llegada') )
 			);
 			
 			$estado = $this->EE->seguimiento->insertar_seguimiento( $registro );
