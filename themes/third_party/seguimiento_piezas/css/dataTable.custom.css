@@ -1,0 +1,39 @@
+.dataTables_wrapper .ui-widget-header:first-child {
+	background: none;
+	color: inherit;
+	margin-top:0px;
+}
+
+.dataTables_wrapper .ui-toolbar:first-child {
+	padding:0px;
+}
+
+.dataTables_filter {
+	margin-bottom: 5px;
+}
+
+.dataTables_length {
+	position: relative;
+	top: 10px;
+}
+
+.dataTables_length select {
+	width:55px;
+}
+
+#mainContent .pageContents table {
+margin-bottom: 0px;
+}
+
+.chzn-container .chzn-results {
+	text-align:center;
+}
+
+.paging_full_numbers .ui-button {
+	color: #FFF !important;
+	font-weight: bold;
+}
+
+.primera_columna_tabla {
+	width:20px;
+}

@@ -1,0 +1,20 @@
+.mensage {
+	background-color: #383838;
+	padding: 10px;
+	border-radius: 5px;
+	color: #ADFF2F;
+	font-weight: bold;
+}
+
+input.error {
+	border: 2px solid red !important;
+}
+
+div.error {
+	background-color: #383838;
+	padding: 10px;
+	border-radius: 5px;
+	color: red;
+	font-weight: bold;
+	margin: 0px 0px 10px 0px;
+}
