@@ -54,6 +54,9 @@
 							array('data' => lang('columna_1'), 'class' => 'primera_columna_tabla'),
 							lang('columna_2'),
 							lang('columna_3'),
+							lang('columna_4'),
+							lang('columna_5'),
+							lang('columna_6'),
 							''
 							);
 
@@ -68,7 +71,10 @@
 			$this->table->add_row(
 					$seguimiento['id'],
 					$seguimiento['codigo'],
-					$seguimiento['detalle'],
+					$seguimiento['estado'],
+					$seguimiento['date_added'],
+					$seguimiento['date_llegada'],
+					$seguimiento['usuario'],
 					form_checkbox( array( 'name' => 'item_seleccionado[]', 'value' => $seguimiento['id'], 'class' => 'item_seleccionado' ) )
 				);
 		}

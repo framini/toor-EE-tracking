@@ -53,12 +53,17 @@ class Seguimiento_piezas_mcp {
 		//Parseamos los resultados devueltos
 		foreach($seguimientosEE->result() as $seguimiento)
 		{
+			
+			$usuario = $this->EE->member_model->get_member_data( $seguimiento->usuario_id )->result_array();
+			
 			$seguimientos[$seguimiento->seguimiento_id] = array(
-				"id"  		=> $seguimiento->seguimiento_id, 
-				"codigo" 	=> $seguimiento->seguimiento_codigo,
-				"estado" 	=> $seguimiento->estado,
-				"detalle" 	=> $seguimiento->detalle,
-				"usuario"   => $seguimiento->usuario_id
+				"id"  			=> $seguimiento->seguimiento_id, 
+				"codigo" 		=> $seguimiento->seguimiento_codigo,
+				"estado" 		=> $seguimiento->estado,
+				"detalle" 		=> $seguimiento->detalle,
+				"usuario"   	=> $usuario[0]['username'],
+				"date_added"	=> $seguimiento->date_added,
+				"date_llegada"	=> $seguimiento->date_llegada
 			);
 		}	
 		
@@ -490,7 +495,7 @@ class Seguimiento_piezas_mcp {
 	
 	public function getTableSeguimientos() {
 		
-		$campos = array('seguimiento_id', 'seguimiento_codigo', 'estado');
+		$campos = array('seguimiento_id', 'seguimiento_codigo', 'estado', 'date_added', 'date_llegada', 'usuario_id');
 		
 		$this->getTable('seguimiento_piezas', $campos, TRUE, 'seguimiento_id');
 	}
@@ -677,7 +682,12 @@ class Seguimiento_piezas_mcp {
             
             foreach($aColumns as $col)
             {
-                $row[] = $aRow[$col];
+            	if( $col == "usuario_id" ) {
+            		$usuario = $this->EE->member_model->get_member_data( $aRow[$col] )->result_array();
+					$row[] = $usuario[0]['username'];
+            	} else {
+            		$row[] = $aRow[$col];
+            	}
             }
 			
 			if( $radio ) {

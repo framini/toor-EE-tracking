@@ -22,8 +22,11 @@ $lang = array(
 'valor'											=> 'valor',
 //Tabla Seguimiento de Piezas
 'columna_1'                                     =>  'ID',
-'columna_2'                                     =>  'Usuario',
-'columna_3'                                     =>  'Numero de Tracking',
+'columna_2'                                     =>  'Codigo',
+'columna_3'                                     =>  'Estado',
+'columna_4'                                     =>  'Fecha Creacion',
+'columna_5'                                     =>  'Fecha Llegada',
+'columna_6'                                     =>  'Usuario',
 'columna_2_piezas'                              =>  'Nombre',
 'columna_3_piezas'                              =>  'Detalle',
 
