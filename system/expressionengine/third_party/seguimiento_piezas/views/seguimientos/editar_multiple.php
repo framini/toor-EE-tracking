@@ -7,6 +7,8 @@ $(function() {
             buttonImageOnly: true,
             dateFormat: "yy-mm-dd"
     });
+    
+    $('select').chosen();
 	
 	$('form').submit(function() {
 		
@@ -84,12 +86,12 @@ $(function() {
 						);
 
 	$this -> table -> add_row( array(lang('row_seg_usuario'), 
-									 form_dropdown('usuario[' . $seguimiento['seguimiento_id'] . ']', $usuarios, $seguimiento['usuario_id'])
+									 form_dropdown('usuario[' . $seguimiento['seguimiento_id'] . ']', $usuarios, $seguimiento['usuario_id'], 'class="width200"')
 									 )
 							  );
 	
 	$this -> table -> add_row( array(lang('row_seg_pieza'), 
-									 form_dropdown('pieza[' . $seguimiento['seguimiento_id'] . ']', $piezas, $seguimiento['pieza_id'])
+									 form_dropdown('pieza[' . $seguimiento['seguimiento_id'] . ']', $piezas, $seguimiento['pieza_id'], 'class="width200"')
 									 )
 							  );
 							  

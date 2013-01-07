@@ -6,6 +6,8 @@
             buttonImageOnly: true,
             dateFormat: "yy-mm-dd"
         });
+        
+        $('select').chosen();
     });
 </script>
 
@@ -28,13 +30,13 @@
 
 						$this->table->add_row(
 							form_label('Usuario'),
-							form_dropdown('usuario_id', $usuarios)
+							form_dropdown('usuario_id', $usuarios, '', 'class="width200"')
 						);
 						
 						if( count($piezas) > 0 ) {
 							$this->table->add_row(
 								form_label('Pieza'),
-								form_dropdown('pieza_id', $piezas).form_error( 'pieza_id' )
+								form_dropdown('pieza_id', $piezas, '', 'class="width200"').form_error( 'pieza_id' )
 							);
 						} else {
 							$this->table->add_row(
