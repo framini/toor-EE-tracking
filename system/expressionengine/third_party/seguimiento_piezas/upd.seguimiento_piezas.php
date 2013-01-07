@@ -52,6 +52,9 @@ class Seguimiento_piezas_upd {
 						),
 			"date_added" => array(
 							"type" => "INT"
+						),
+			'date_llegada' => array(
+							'type' => 'INT'
 						)
 		);
 		$this->EE->dbforge->add_field($fields);
