@@ -31,10 +31,18 @@
 							form_dropdown('usuario_id', $usuarios)
 						);
 						
-						$this->table->add_row(
-							form_label('Pieza'),
-							form_dropdown('pieza_id', $piezas)
-						);
+						if( count($piezas) > 0 ) {
+							$this->table->add_row(
+								form_label('Pieza'),
+								form_dropdown('pieza_id', $piezas)
+							);
+						} else {
+							$this->table->add_row(
+								form_label('Pieza'),
+								lang('no_existen_piezas')
+							);
+						}
+						
 						
 						$this->table->add_row(
 							form_label('Fecha de llegada'),

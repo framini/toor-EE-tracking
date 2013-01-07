@@ -73,5 +73,6 @@ $lang = array(
 'seguimiento_editada'							=>	'El seguimiento fue actualizado correctamente!',
 'seguimiento_no_editada'						=>	'El seguimiento no pudo actualizarse!',
 'unauthorized_to_edit'							=>	'No tienes permisos para realizar la edicion del contenido',
-'campo_requerido'								=>  'Nombre es un campo requerido'
+'campo_requerido'								=>  'Nombre es un campo requerido',
+'no_existen_piezas'								=>	'No hay piezas cargadas en el sistema'
 );

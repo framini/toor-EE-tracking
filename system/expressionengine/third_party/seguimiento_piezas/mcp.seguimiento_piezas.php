@@ -562,11 +562,16 @@ class Seguimiento_piezas_mcp {
 		
 		$piezasEE = $this->EE->pieza->get_piezas();
 		
-		//Parseamos los resultados devueltos
-		foreach($piezasEE->result() as $pieza)
-		{
-			$piezas[$pieza->pieza_id] = $pieza->nombre;
+		if( !is_null( $piezasEE ) ) {
+			//Parseamos los resultados devueltos
+			foreach($piezasEE->result() as $pieza)
+			{
+				$piezas[$pieza->pieza_id] = $pieza->nombre;
+			}
+		} else {
+			$piezas = array();
 		}
+		
 		
 		$data['usuarios'] = $usuarios;
 		$data['piezas'] = $piezas;
