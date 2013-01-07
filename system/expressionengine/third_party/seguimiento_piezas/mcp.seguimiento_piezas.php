@@ -40,6 +40,8 @@ class Seguimiento_piezas_mcp {
 	}
 	
 	public function index() {
+		$this->EE->load->helper('date');
+		
 		//Agregamos los botones
 		$this->EE->cp->set_right_nav(array(
 				'nuevo_seguimiento'		=> BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_seguimiento',
@@ -63,8 +65,8 @@ class Seguimiento_piezas_mcp {
 					"estado" 		=> $seguimiento->estado,
 					"detalle" 		=> $seguimiento->detalle,
 					"usuario"   	=> $usuario[0]['username'],
-					"date_added"	=> $seguimiento->date_added,
-					"date_llegada"	=> $seguimiento->date_llegada
+					"date_added"	=> unix_to_human($seguimiento->date_added, TRUE, 'eu'),
+					"date_llegada"	=> unix_to_human($seguimiento->date_llegada, TRUE, 'eu')
 				);
 			}
 		} else {
@@ -616,6 +618,8 @@ class Seguimiento_piezas_mcp {
 
 	private function getTable($tabla, $campos, $radio = FALSE, $col_id = NULL)
     {
+    	$this->EE->load->helper('date');
+    	
      	/*
 	  	* Array de columnas que van a ser devueltas al frontend
 	  	*/
@@ -699,7 +703,14 @@ class Seguimiento_piezas_mcp {
             	if( $col == "usuario_id" ) {
             		$usuario = $this->EE->member_model->get_member_data( $aRow[$col] )->result_array();
 					$row[] = $usuario[0]['username'];
-            	} else {
+            	} 
+            	
+				elseif( preg_match('/^date_.+/', $col, $matches) != 0 ) {
+					$fecha = unix_to_human($aRow[$col], TRUE, 'eu');
+					$row[] = $fecha;
+				}
+				
+            	else {
             		$row[] = $aRow[$col];
             	}
             }
