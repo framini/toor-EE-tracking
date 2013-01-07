@@ -50,22 +50,26 @@ class Seguimiento_piezas_mcp {
 		
 		//Obtenemos todos los seguimientos cargados en el sistema
 		$seguimientosEE = $this->EE->seguimiento->get_seguimientos();
-		//Parseamos los resultados devueltos
-		foreach($seguimientosEE->result() as $seguimiento)
-		{
-			
-			$usuario = $this->EE->member_model->get_member_data( $seguimiento->usuario_id )->result_array();
-			
-			$seguimientos[$seguimiento->seguimiento_id] = array(
-				"id"  			=> $seguimiento->seguimiento_id, 
-				"codigo" 		=> $seguimiento->seguimiento_codigo,
-				"estado" 		=> $seguimiento->estado,
-				"detalle" 		=> $seguimiento->detalle,
-				"usuario"   	=> $usuario[0]['username'],
-				"date_added"	=> $seguimiento->date_added,
-				"date_llegada"	=> $seguimiento->date_llegada
-			);
-		}	
+		if( !is_null( $seguimientosEE ) ) {
+			//Parseamos los resultados devueltos
+			foreach($seguimientosEE->result() as $seguimiento)
+			{
+				
+				$usuario = $this->EE->member_model->get_member_data( $seguimiento->usuario_id )->result_array();
+				
+				$seguimientos[$seguimiento->seguimiento_id] = array(
+					"id"  			=> $seguimiento->seguimiento_id, 
+					"codigo" 		=> $seguimiento->seguimiento_codigo,
+					"estado" 		=> $seguimiento->estado,
+					"detalle" 		=> $seguimiento->detalle,
+					"usuario"   	=> $usuario[0]['username'],
+					"date_added"	=> $seguimiento->date_added,
+					"date_llegada"	=> $seguimiento->date_llegada
+				);
+			}
+		} else {
+			$seguimientos = array();
+		}
 		
 		$data['seguimientos'] = $seguimientos;
 		$data['urlDataSource'] = html_entity_decode ( base_url() . BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=getTableSeguimientos' );	
@@ -95,15 +99,20 @@ class Seguimiento_piezas_mcp {
 		
 		$piezasEE = $this->EE->pieza->get_piezas();
 		
-		//Parseamos los resultados devueltos
-		foreach($piezasEE->result() as $pieza)
-		{
-			$piezas[$pieza->pieza_id] = array(
-				"id"  		=> $pieza->pieza_id, 
-				"nombre" 	=> $pieza->nombre,
-				"detalle" 	=> $pieza->detalle,
-			);
+		if( !is_null($piezasEE) ) {
+			//Parseamos los resultados devueltos
+			foreach($piezasEE->result() as $pieza)
+			{
+				$piezas[$pieza->pieza_id] = array(
+					"id"  		=> $pieza->pieza_id, 
+					"nombre" 	=> $pieza->nombre,
+					"detalle" 	=> $pieza->detalle,
+				);
+			}
+		} else {
+			$piezas = array();
 		}
+		
 		
 		$data['piezas'] = $piezas;
 		
