@@ -1,6 +1,6 @@
 <script>
 $(function() {
-	$("form").validate({
+	$("#formulario").validate({
 		invalidHandler: function(e, validator) {
 			var errors = validator.numberOfInvalids();
 			if (errors) {
@@ -14,13 +14,14 @@ $(function() {
 			}
 		},
 		submitHandler: function( form ) {
-			if ($(form).valid()) 
-               form.submit(); 
+			if ($(form).valid()) {
+				form.submit();
+			}
            return false; 
 		},
 		messages: {
 			nombre: {
-				required: " "
+				required: "Nombre es requerido"
 			}
 		}
 	});

@@ -34,19 +34,19 @@
 						if( count($piezas) > 0 ) {
 							$this->table->add_row(
 								form_label('Pieza'),
-								form_dropdown('pieza_id', $piezas)
+								form_dropdown('pieza_id', $piezas).form_error( 'pieza_id' )
 							);
 						} else {
 							$this->table->add_row(
 								form_label('Pieza'),
-								lang('no_existen_piezas')
+								lang('no_existen_piezas').form_error( 'pieza_id' )
 							);
 						}
 						
 						
 						$this->table->add_row(
 							form_label('Fecha de llegada'),
-							form_input(array('name' => 'date_llegada', 'id' => 'datepicker', 'style' => 'width:20%'))
+							form_input(array('name' => 'date_llegada', 'id' => 'datepicker', 'style' => 'width:20%')).form_error( 'date_llegada' )
 						);
 						
 						$this->table->add_row(

@@ -590,7 +590,7 @@ class Seguimiento_piezas_mcp {
 		
 		$this->EE->form_validation->set_error_delimiters('<span class="error">', '</span>');
 		$this->EE->form_validation->set_rules("nombre", "nombre", "trim|required|xss_clean");
-		$this->EE->form_validation->set_rules("detalle", "detalle", "trim|required|xss_clean");
+		$this->EE->form_validation->set_rules("detalle", "detalle", "required|xss_clean");
 		
 		if( $this->EE->form_validation->run() ) {
 			
