@@ -2,16 +2,38 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-class Seguimiento_piezas_upd {
+// include base class
+if ( ! class_exists('Modulo_init_base'))
+{
+	require_once(PATH_THIRD.'seguimiento_piezas/base.modulo_init.php');
+}
 
-	var $EE;
-	var $version = 0.2;
-	var $module_name = "Seguimiento_piezas";
-	var $table_name_seguimiento = "seguimiento_piezas";
-	var $table_name_piezas = "piezas";
+class Seguimiento_piezas_upd extends Modulo_init_base {
 
-	function __construct() {
-		$this -> EE = &get_instance();
+	/**
+	 * Class name
+	 *
+	 * @var        string
+	 * @access     private
+	 */
+	private $class_name;
+	private $table_name_seguimiento = "seguimiento_piezas";
+	private $table_name_piezas = "piezas";
+
+
+	/**
+	 * Constructor
+	 *
+	 * @access     public
+	 * @return     void
+	 */
+	public function __construct()
+	{
+		// Call parent constructor
+		parent::__construct();
+
+		// Set class name
+		$this->class_name = ucfirst(FRR_PACKAGE);
 	}
 	
 	//Metodo utilizado para instalar el modulo
@@ -19,11 +41,12 @@ class Seguimiento_piezas_upd {
 		
 		//Array a ser insertado en la tabla de modulos
 		$data = array(
-			'module_name'			=>	$this->module_name,
+			'module_name'			=>	$this->name,
 			'module_version'		=>	$this->version,
 			'has_cp_backend'		=>	'y',
 			'has_publish_fields'	=>	'n'
 		);
+
 		$this->EE->db->insert('modules', $data);
 		
 		//Tablas a ser utilizadas por el modulo
@@ -86,19 +109,31 @@ class Seguimiento_piezas_upd {
 
 	
 	function update($current = '') {
-		//V 0.2
-		$this->EE->load->dbforge();
-		$fields = array(
-                        'date_llegada' => array('type' => 'INT')
-		);
-		$this->EE->dbforge->add_column( $this->table_name_seguimiento, $fields);
+
+		if ($current == '' OR version_compare($current, $this->version) === 0)
+		{
+			return FALSE;
+		}
+
+		// -------------------------------------
+		//  Upgrade a 0.2
+		// -------------------------------------
+
+		if (version_compare($current, '0.2.0', '<'))
+		{
+			$this->EE->load->dbforge();
+			$fields = array(
+	                        'date_llegada' => array('type' => 'INT')
+			);
+			$this->EE->dbforge->add_column( $this->table_name_seguimiento, $fields);
+		}
 			
 
 		return TRUE;
 	}
 	
 	function uninstall() {
-		$this->EE->db->where('module_name', $this->module_name);
+		$this->EE->db->where('module_name', $this->name);
 		$this->EE->db->delete('modules');
 
 

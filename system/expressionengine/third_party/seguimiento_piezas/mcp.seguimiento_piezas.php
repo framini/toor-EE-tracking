@@ -1,53 +1,47 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Seguimiento_piezas_mcp {
-	var $EE;
-	var $return_data;
 
-	var $module_label = "Seguimiento Piezas";
-	var $page_title = "Seguimiento Piezas";
-	
+// include base class
+if ( ! class_exists('Modulo_init_base'))
+{
+	require_once(PATH_THIRD.'seguimiento_piezas/base.modulo_init.php');
+}
+
+
+class Seguimiento_piezas_mcp extends Modulo_init_base  {
 	function __construct() {
 		
-		$this->EE =& get_instance();
+		// -------------------------------------
+		// llamamos al parent constructor
+		// -------------------------------------
+
+		parent::__construct();
 
 		//Nos aseguramos que el modulo de seguimiento solo pueda ser visto por superadmins
 		if($this->EE->session->userdata('group_id') == 2) {
 			show_error( $this->EE->lang->line('acceso_no_autorizado') );
 		}
-		
-		//CSS
-		//$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/smoothness/jquery-ui-1.9.2.custom.min.css' rel='stylesheet'/>");
-		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/jquery.dataTables_themeroller.css' rel='stylesheet'/>");
-		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/dataTable.custom.css' rel='stylesheet'/>");
-		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/chosen.css' rel='stylesheet'/>");
-		$this->EE->cp->add_to_head("<link href='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/css/general.css' rel='stylesheet'/>");
-		
-		//JS
-		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/lib/jquery-ui-1.9.2.custom.min.js'></script>");
-		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/lib/jquery.dataTables.js'></script>");
-		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/lib/chosen.jquery.js'></script>");
-		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/varios/mensajes.js'></script>");
-		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/lib/jquery.validate.js'></script>");
-		$this->EE->cp->add_to_head("<script src='".$this->EE->config->item("theme_folder_url")."third_party/seguimiento_piezas/js/lib/jquery.form.js'></script>");
 
-		//Cargamos los recursos
+		//Inicializamos la url base para el package
+		$this->set_base_url();
+
+		//Cargamos los recursos requeridos por el modulo
 		$this->EE->load->model("seguimiento");
 		$this->EE->load->model("pieza");
 		$this->EE->load->library('table');
 		$this->EE->load->helper('form');
-
+		$this->EE->load->helper('date');
 	}
 	
 	public function index() {
-		$this->EE->load->helper('date');
 		
-		//Agregamos los botones
+		//Agregamos los botones (menu de arriba a la derecha)
 		$this->EE->cp->set_right_nav(array(
-				'nuevo_seguimiento'		=> BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_seguimiento',
-				'gestion_piezas'        => BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas'
+				'nuevo_seguimiento'		=> $this->base_url.AMP.'method=crear_seguimiento',
+				'gestion_piezas'        => $this->base_url.AMP.'method=gestionar_piezas'
 		));
 		
+		//Titulo de la pagina
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('seguimiento_piezas_module_name'));
 		
 		//Obtenemos todos los seguimientos cargados en el sistema
@@ -73,28 +67,29 @@ class Seguimiento_piezas_mcp {
 			$seguimientos = array();
 		}
 		
-		$data['seguimientos'] = $seguimientos;
-		$data['urlDataSource'] = html_entity_decode ( base_url() . BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=getTableSeguimientos' );	
-		
-		if( $this->EE->session->flashdata('message') ) {
-			$data['message'] = $this->EE->session->flashdata('message');
-		}
+		//Definimos la data a ser mostrada en la view
+		$this->data['seguimientos'] = $seguimientos;
+		$this->data['urlDataSource'] = html_entity_decode ( $this->base_url.AMP.'method=getTableSeguimientos' );	
 
-		$data['options'] = array(
+		//Opciones para el dropdown de acciones (abajo a la derecha de la tabla)
+		$this->data['options'] = array(
 			'edit'  	=> lang('edit_selected'),
 			'delete'    => lang('delete_selected')
 		);
 
-		$data['action_url'] = html_entity_decode ( base_url(). BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=editar_borrar_seguimientos');
-	
-		return $this->EE->load->view('index/index', $data, TRUE);
+		//Action para el form
+		$this->data['action_url'] = html_entity_decode ( $this->base_url.AMP.'method=editar_borrar_seguimientos');
+		// Mostramos la vista usando el metodo view de la clase modulo_init_base
+		return $this->view('index/index');
 	}
 
+
+
 	public function gestionar_piezas() {
-		$this->EE->cp->set_breadcrumb(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas', $this->EE->lang->line('seguimiento_piezas_module_name'));
+		$this->EE->cp->set_breadcrumb($this->base_url, $this->EE->lang->line('seguimiento_piezas_module_name'));
 		
 		$this->EE->cp->set_right_nav(array(
-				'nueva_pieza'        => BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=crear_pieza'
+			'nueva_pieza' => $this->base_url.AMP.'method=crear_pieza'
 		));
 		
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('titulo_gestion_piezas'));
@@ -116,25 +111,24 @@ class Seguimiento_piezas_mcp {
 		}
 		
 		
-		$data['piezas'] = $piezas;
+		$this->data['piezas'] = $piezas;
 		
-		$data['urlDataSource'] = html_entity_decode ( base_url() . BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=getTablePiezas' );	
+		$this->data['urlDataSource'] = html_entity_decode ( $this->base_url.AMP.'method=getTablePiezas' );	
 		
 		if( $this->EE->session->flashdata('message') ) {
-			$data['message'] = $this->EE->session->flashdata('message');
+			$this->data['message'] = $this->EE->session->flashdata('message');
 		}
 
-		$data['options'] = array(
+		$this->data['options'] = array(
 			'edit'  	=> lang('edit_selected'),
 			'delete'    => lang('delete_selected')
 		);
-		
-		$data['action_url'] = html_entity_decode ( base_url(). BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=editar_borrar_piezas');
 	
-		return $this->EE->load->view('piezas/index', $data, TRUE);
-		
-		
+		$this->data['action_url'] = html_entity_decode ( $this->base_url.AMP.'method=editar_borrar_piezas');
+	
+		return $this->view('piezas/index');
 	}
+
 
 	public function editar_borrar_seguimientos() {
 		$this->EE->load->library("form_validation");
@@ -178,8 +172,7 @@ class Seguimiento_piezas_mcp {
 		if ( ! $this->EE->input->post('pieza_id'))
 		{
 			$this->EE->session->set_flashdata('message', lang('no_valid_selections'));
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas');
+			$this->EE->functions->redirect($this->base_url.AMP.'method=gestionar_piezas');
 		}
 		
 		//Parametros a modificar
@@ -208,8 +201,7 @@ class Seguimiento_piezas_mcp {
 			$message = $estado ? $this->EE->lang->line('pieza_editada') : $this->EE->lang->line('pieza_no_editada');
 			
 			$this->EE->session->set_flashdata('message', $message);
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas');
+			$this->EE->functions->redirect( $this->base_url.AMP.'method=gestionar_piezas' );
 		} else {
 				$msg = '';
 
@@ -233,8 +225,7 @@ class Seguimiento_piezas_mcp {
 		if ( ! $this->EE->input->post('seguimiento_id'))
 		{
 			$this->EE->session->set_flashdata('message', lang('no_valid_selections'));
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas');
+			$this->EE->functions->redirect($this->base_url);
 		}
 		
 		//Parametros a modificar
@@ -269,8 +260,7 @@ class Seguimiento_piezas_mcp {
 			$message = $estado ? $this->EE->lang->line('seguimiento_editada') : $this->EE->lang->line('seguimiento_no_editada');
 			
 			$this->EE->session->set_flashdata('message', $message);
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas');
+			$this->EE->functions->redirect($this->base_url);
 		} else {
 				$msg = '';
 
@@ -289,9 +279,8 @@ class Seguimiento_piezas_mcp {
 
 	
 	private function editar_seguimiento_confirmar() {
-		$this->EE->load->helper('date');
 		//Inicializamos el breadcrumb
-		$this->EE->cp->set_breadcrumb(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas', $this->EE->lang->line('seguimiento_piezas_module_name'));
+		$this->EE->cp->set_breadcrumb($this->base_url, $this->EE->lang->line('seguimiento_piezas_module_name'));
 		
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('titulo_editar_seguimiento'));
 		
@@ -326,7 +315,7 @@ class Seguimiento_piezas_mcp {
 			);
 		}
 		
-		$data['seguimientos'] = $seguimientos;
+		$this->data['seguimientos'] = $seguimientos;
 		
 		//Obtenemos todos los usuarios del sistema
 		//TODO: Ver si hace falta filtrar la query a solo ciertos usuarios
@@ -346,17 +335,17 @@ class Seguimiento_piezas_mcp {
 			$piezas[$pieza->pieza_id] = $pieza->nombre;
 		}
 		
-		$data['usuarios'] = $usuarios;
-		$data['piezas'] = $piezas;
+		$this->data['usuarios'] = $usuarios;
+		$this->data['piezas'] = $piezas;
 
-		return $this->EE->load->view('seguimientos/editar_multiple', $data, TRUE);		
+		return $this->view('seguimientos/editar_multiple');
 	}
 	
 	
 	private function editar_pieza_confirmar() {
 		
 		//Inicializamos el breadcrumb
-		$this->EE->cp->set_breadcrumb(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas', $this->EE->lang->line('titulo_gestion_piezas'));
+		$this->EE->cp->set_breadcrumb($this->base_url.AMP.'method=gestionar_piezas', $this->EE->lang->line('titulo_gestion_piezas'));
 		
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('titulo_editar_piezas'));
 		
@@ -379,20 +368,19 @@ class Seguimiento_piezas_mcp {
 			);
 		}
 		
-		$data['piezas'] = $piezas;
+		$this->data['piezas'] = $piezas;
 
-		return $this->EE->load->view('piezas/editar_multiple', $data, TRUE);		
+		return $this->view('piezas/editar_multiple');		
 	}
 
 	
 	private function eliminar_seguimiento_confirmar() {
 		if ( ! $this->EE->input->post('item_seleccionado'))
 		{
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas');
+			$this->EE->functions->redirect($this->base_url);
 		}
 
-		$this->EE->cp->set_breadcrumb(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas', $this->EE->lang->line('seguimiento_piezas_module_name'));
+		$this->EE->cp->set_breadcrumb($this->base_url.AMP.'method=gestionar_piezas', $this->EE->lang->line('seguimiento_piezas_module_name'));
 		
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('titulo_eliminar_seguimiento'));
 		
@@ -407,31 +395,30 @@ class Seguimiento_piezas_mcp {
 		}
 
 		// Guardamos los seguimientos a ser eliminados
-		$data['damned'] = $damned;
+		$this->data['damned'] = $damned;
 		
 		if (count($damned) == 1)
 		{
-			$data['message'] = lang('delete_seg_confirm');
+			$this->data['message'] = lang('delete_seg_confirm');
 		}
 		else
 		{
-			$data['message'] = lang('delete_segs_confirm');
+			$this->data['message'] = lang('delete_segs_confirm');
 		}
 		
-		$data['action_url'] = html_entity_decode ( base_url(). BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=eliminar_seguimiento');
+		$this->data['action_url'] = html_entity_decode ( $this->base_url.AMP.'method=eliminar_seguimiento');
 
-		return $this->EE->load->view('seguimientos/eliminar_confirm', $data, TRUE);
+		return $this->view('seguimientos/eliminar_confirm');
 	}
 	
 	
 	private function eliminar_pieza_confirmar() {
 		if ( ! $this->EE->input->post('item_seleccionado'))
 		{
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas');
+			$this->EE->functions->redirect( $this->base_url.AMP.'method=gestionar_piezas' );
 		}
 
-		$this->EE->cp->set_breadcrumb(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas', $this->EE->lang->line('titulo_gestion_piezas'));
+		$this->EE->cp->set_breadcrumb( $this->base_url.AMP.'method=gestionar_piezas', $this->EE->lang->line('titulo_gestion_piezas'));
 		
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('titulo_eliminar_piezas'));
 		
@@ -446,20 +433,20 @@ class Seguimiento_piezas_mcp {
 		}
 
 		// Guardamos las piezas a ser eliminadas
-		$data['damned'] = $damned;
+		$this->data['damned'] = $damned;
 		
 		if (count($damned) == 1)
 		{
-			$data['message'] = lang('delete_pieza_confirm');
+			$this->data['message'] = lang('delete_pieza_confirm');
 		}
 		else
 		{
-			$data['message'] = lang('delete_piezas_confirm');
+			$this->data['message'] = lang('delete_piezas_confirm');
 		}
 		
-		$data['action_url'] = html_entity_decode ( base_url(). BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=eliminar_pieza');
+		$this->data['action_url'] = html_entity_decode ( $this->base_url.AMP.'method=eliminar_pieza');
 
-		return $this->EE->load->view('piezas/eliminar_confirm', $data, TRUE);
+		return $this->view('piezas/eliminar_confirm');
 	}
 	
 	public function eliminar_pieza() {
@@ -468,8 +455,7 @@ class Seguimiento_piezas_mcp {
 		if ( ! $this->EE->input->post('delete'))
 		{
 			$this->EE->session->set_flashdata('message', lang('no_valid_selections'));
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas');
+			$this->EE->functions->redirect($this->base_url.AMP.'method=gestionar_piezas');
 		}	
 		
 		$estado = $this->EE->pieza->eliminar_pieza( $this->EE->input->post('delete') );
@@ -478,8 +464,7 @@ class Seguimiento_piezas_mcp {
 		$message = $estado ? $this->EE->lang->line('pieza_eliminada') : $this->EE->lang->line('pieza_no_eliminada');
 		
 		$this->EE->session->set_flashdata('message', $message);
-		$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-			.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas');
+		$this->EE->functions->redirect($this->base_url.AMP.'method=gestionar_piezas');
 		
 	}
 	
@@ -489,8 +474,7 @@ class Seguimiento_piezas_mcp {
 		if ( ! $this->EE->input->post('delete'))
 		{
 			$this->EE->session->set_flashdata('message', lang('no_valid_selections'));
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas');
+			$this->EE->functions->redirect($this->base_url);
 		}	
 		
 		$estado = $this->EE->seguimiento->eliminar_seguimiento( $this->EE->input->post('delete') );
@@ -499,8 +483,7 @@ class Seguimiento_piezas_mcp {
 		$message = $estado ? $this->EE->lang->line('seg_eliminada') : $this->EE->lang->line('seg_no_eliminada');
 		
 		$this->EE->session->set_flashdata('message', $message);
-		$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-			.'M=show_module_cp'.AMP.'module=seguimiento_piezas');
+		$this->EE->functions->redirect($this->base_url);
 		
 	}
 	
@@ -519,11 +502,10 @@ class Seguimiento_piezas_mcp {
 	}
 	
 	public function crear_seguimiento() {
-		$this->EE->load->helper('date');
 		$this->EE->load->library("form_validation");
 		
 		//Inicializamos el breadcrumb
-		$this->EE->cp->set_breadcrumb(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas', $this->EE->lang->line('seguimiento_piezas_module_name'));
+		$this->EE->cp->set_breadcrumb($this->base_url, $this->EE->lang->line('seguimiento_piezas_module_name'));
 		
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('titulo_crear_seguimiento'));
 		
@@ -548,8 +530,7 @@ class Seguimiento_piezas_mcp {
 			$message = $estado ? $this->EE->lang->line('seguimiento_creado') : $this->EE->lang->line('seguimiento_no_creado');
 			
 			$this->EE->session->set_flashdata('message', $message);
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas');	
+			$this->EE->functions->redirect($this->base_url);	
 		}
 		
 		//Obtenemos todos los usuarios del sistema
@@ -575,10 +556,10 @@ class Seguimiento_piezas_mcp {
 		}
 		
 		
-		$data['usuarios'] = $usuarios;
-		$data['piezas'] = $piezas;
+		$this->data['usuarios'] = $usuarios;
+		$this->data['piezas'] = $piezas;
 		
-		return $this->EE->load->view('seguimientos/crear_editar_seguimiento', $data , TRUE);
+		return $this->view('seguimientos/crear_editar_seguimiento');
 	}
 
 	public function crear_pieza() {
@@ -586,7 +567,7 @@ class Seguimiento_piezas_mcp {
 		$this->EE->load->library("form_validation");
 		
 		//Inicializamos el breadcrumb
-		$this->EE->cp->set_breadcrumb(BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas', $this->EE->lang->line('titulo_gestion_piezas'));
+		$this->EE->cp->set_breadcrumb($this->base_url.AMP.'method=gestionar_piezas', $this->EE->lang->line('titulo_gestion_piezas'));
 		
 		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('titulo_crear_pieza'));
 		
@@ -607,19 +588,16 @@ class Seguimiento_piezas_mcp {
 			$message = $estado ? $this->EE->lang->line('pieza_creada') : $this->EE->lang->line('pieza_no_creada');
 			
 			$this->EE->session->set_flashdata('message', $message);
-			$this->EE->functions->redirect(BASE.AMP.'C=addons_modules'.AMP
-				.'M=show_module_cp'.AMP.'module=seguimiento_piezas'.AMP.'method=gestionar_piezas');	
+			$this->EE->functions->redirect($this->base_url.AMP.'method=gestionar_piezas');	
 			
 		}
 		
-		$data = array();
-		return $this->EE->load->view('piezas/crear_editar_pieza', $data , TRUE);
+		$this->data = array();
+		return $this->view('piezas/crear_editar_pieza');
 	}
 
 	private function getTable($tabla, $campos, $radio = FALSE, $col_id = NULL)
-    {
-    	$this->EE->load->helper('date');
-    	
+    {	
      	/*
 	  	* Array de columnas que van a ser devueltas al frontend
 	  	*/
