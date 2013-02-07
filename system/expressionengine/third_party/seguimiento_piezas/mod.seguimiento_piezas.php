@@ -1,12 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Seguimiento_piezas {
-	var $EE;
-	var $version	= 0.1;
+// include base class
+if ( ! class_exists('Modulo_init_base'))
+{
+	require_once(PATH_THIRD.'seguimiento_piezas/base.modulo_init.php');
+}
+
+class Seguimiento_piezas extends Modulo_init_base {
 	
 	function __construct()
 	{
-		$this->EE =& get_instance();
+		// Call parent constructor
+		parent::__construct();
 		
 		//Cargamos los recursos
 		$this->EE->load->model("seguimiento");
