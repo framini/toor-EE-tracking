@@ -2,6 +2,11 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
+/**
+ * @author Francisco Ramini <framini@gmail.com>
+ * Clase UPD para instalar/desinstalar el modulo
+ */
+
 // include base class
 if ( ! class_exists('Modulo_init_base'))
 {

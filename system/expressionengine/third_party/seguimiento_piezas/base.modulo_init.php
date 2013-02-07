@@ -6,6 +6,8 @@ include(PATH_THIRD.'seguimiento_piezas/config.php');
 /**
  * Modulo Init Base Class
  *
+ * Clase que tiene funciones y varuables comunes a las distintas clases que usa el modulo
+ *
  * @package        seguimiento_piezas
  * @author         Francisco Ramini <framini@gmail.com>
  */
@@ -91,18 +93,7 @@ class Modulo_init_base
 	 * @var        array
 	 * @access     private
 	 */
-	private $mcp_assets = array(
-		'css/jquery.dataTables_themeroller.css',
-		'css/dataTable.custom.css',
-		'css/chosen.css',
-		'css/general.css',
-		'js/lib/jquery-ui-1.9.2.custom.min.js',
-		'js/lib/jquery.dataTables.js',
-		'js/lib/chosen.jquery.js',
-		'js/varios/mensajes.js',
-		'js/lib/jquery.validate.js',
-		'js/lib/jquery.form.js'
-	);
+	private $mcp_assets;
 
 
 	/**
@@ -136,6 +127,11 @@ class Modulo_init_base
 		// -------------------------------------
 
 		$this->site_id = $this->EE->config->item('site_id');
+
+		//--------------------------------------
+		//  Incializamos los assets a ser usados por el modulo
+		//--------------------------------------
+		$this->mcp_assets = unserialize(FRR_ASSETS);
 
 	}
 
